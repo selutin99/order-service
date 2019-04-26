@@ -3,6 +3,8 @@ package com.galua.onlinestore.orderservice.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -25,6 +27,7 @@ public class Orders {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "status_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Status status;
 
     //TODO: Добавить внешний ключ после подключения модуля

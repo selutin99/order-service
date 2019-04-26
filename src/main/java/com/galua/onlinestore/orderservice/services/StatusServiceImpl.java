@@ -28,23 +28,32 @@ public class StatusServiceImpl implements StatusService{
             throw new IllegalArgumentException("Статус уже существует");
         }
         else {
+            log.severe("Сохранение статуса: " +status);
             statusRepositoty.save(status);
         }
     }
 
     @Override
-    public void updateStatus(Status status) { statusRepositoty.save(status); }
+    public void updateStatus(Status status) {
+        log.severe("Обновление статуса: "+status);
+        statusRepositoty.save(status);
+    }
 
     @Override
     public void deleteStatus(int id) {
+        log.severe("Удаление статуса с id="+id);
         statusRepositoty.delete(getStatusByID(id));
     }
 
     @Override
-    public Status getStatusByID(int id) { return statusRepositoty.findById(id).get(); }
+    public Status getStatusByID(int id) {
+        log.severe("Получение статуса с id="+id);
+        return statusRepositoty.findById(id).get();
+    }
 
     @Override
     public List<Status> getAllStatuses() {
+        log.severe("Получение всех статусов");
         List<Status> listOfStatuses = new ArrayList<>();
         statusRepositoty.findAll().forEach(e -> listOfStatuses.add(e));
         return listOfStatuses;

@@ -16,38 +16,43 @@ public class OrdersServiceImpl implements OrdersService{
     private OrdersRepo ordersRepository;
 
     @Override
-    public void createOrder(Orders orders) {
-        if(orders==null){
+    public void createOrder(Orders order) {
+        if(order==null){
             log.severe("Был передан пустой заказ");
             throw new IllegalArgumentException("Заказ не передан");
         }
-        List<Orders> list = ordersRepository.findByName(orders.getName());
+        List<Orders> list = ordersRepository.findByName(order.getName());
         if (list.size() > 0) {
             log.severe("Был передан существующий заказ");
             throw new IllegalArgumentException("Заказ уже существует");
         }
         else {
-            ordersRepository.save(orders);
+            log.severe("Сохранение заказа: "+order);
+            ordersRepository.save(order);
         }
     }
 
     @Override
     public void updateOrder(Orders order) {
+        log.severe("Обновление заказа: "+order);
         ordersRepository.save(order);
     }
 
     @Override
     public void deleteOrder(int id) {
+        log.severe("Удаление заказа с id="+id);
         ordersRepository.delete(getOrderByID(id));
     }
 
     @Override
     public Orders getOrderByID(int id) {
+        log.severe("Получение заказа с id="+id);
         return ordersRepository.findById(id).get();
     }
 
     @Override
     public List<Orders> getAllOrders() {
+        log.severe("Получение всех заказов");
         List<Orders> listOfOrders = new ArrayList<>();
         ordersRepository.findAll().forEach(e -> listOfOrders.add(e));
         return listOfOrders;
