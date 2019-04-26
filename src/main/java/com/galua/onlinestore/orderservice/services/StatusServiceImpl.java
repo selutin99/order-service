@@ -2,12 +2,14 @@ package com.galua.onlinestore.orderservice.services;
 
 import com.galua.onlinestore.orderservice.entities.Status;
 import com.galua.onlinestore.orderservice.repositories.StatusRepo;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Log
 @Service
 public class StatusServiceImpl implements StatusService{
 
@@ -17,10 +19,12 @@ public class StatusServiceImpl implements StatusService{
     @Override
     public void createStatus(Status status) {
         if(status==null){
+            log.severe("Был передан пустой статус");
             throw new IllegalArgumentException("Статус не передан");
         }
         List<Status> list = statusRepositoty.findByName(status.getName());
         if (list.size() > 0) {
+            log.severe("Был передан существующий статус");
             throw new IllegalArgumentException("Статус уже существует");
         }
         else {
