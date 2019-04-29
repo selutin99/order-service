@@ -34,9 +34,11 @@ public class StatusServiceImpl implements StatusService{
     }
 
     @Override
-    public void updateStatus(Status status) {
-        log.severe("Обновление статуса: "+status);
-        statusRepositoty.save(status);
+    public void updateStatus(int id, Status status) {
+        Status findStatus = getStatusByID(id);
+        findStatus.setName(status.getName());
+        createStatus(findStatus);
+        log.severe("Обновление статуса: "+findStatus);
     }
 
     @Override

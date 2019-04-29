@@ -23,9 +23,11 @@ public class StatusController {
     public ResponseEntity<Status> getStatusesById(@PathVariable("id") int id) {
         try {
             Status status = statusService.getStatusByID(id);
+            log.severe("Статус найден успешно");
             return new ResponseEntity<>(status, HttpStatus.OK);
         }
         catch(NoSuchElementException e){
+            log.severe("Статус не найден");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -33,6 +35,7 @@ public class StatusController {
     @GetMapping("statuses")
     public ResponseEntity<List<Status>> getAllStatuses() {
         List<Status> list = statusService.getAllStatuses();
+        log.severe("Получены все статусы");
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -42,23 +45,34 @@ public class StatusController {
             statusService.createStatus(status);
         }
         catch(IllegalArgumentException e){
+            log.severe("Попытка добавления существующего статуса");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         catch(Exception e){
+            log.severe("Передан неверный статус");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path("/statuses/{id}").buildAndExpand(status.getId()).toUri());
+        log.severe("Статус добавлен успешно");
         return new ResponseEntity(status, headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("statuses")
-    public ResponseEntity<Status> updateStatuses(@RequestBody Status status) {
+    @PutMapping("statuses/{id}")
+    public ResponseEntity<Status> updateStatuses(@PathVariable(value = "id") int id,
+                                                 @RequestBody Status status) {
         try {
-            statusService.updateStatus(status);
+            statusService.updateStatus(id, status);
+            log.severe("Статус обновлён успешно");
+            status.setId(id);
             return new ResponseEntity<>(status, HttpStatus.OK);
         }
+        catch(NoSuchElementException e){
+            log.severe("Передан несуществующий статус");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         catch(Exception e){
+            log.severe("Передан неверный статус");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -67,9 +81,11 @@ public class StatusController {
     public ResponseEntity<Void> deleteStatuses(@PathVariable("id") int id) {
         try {
             statusService.deleteStatus(id);
+            log.severe("Статус удалён успешно");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         catch(NoSuchElementException e){
+            log.severe("Статус не найден");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

@@ -1,6 +1,7 @@
 package com.galua.onlinestore.orderservice.services;
 
 import com.galua.onlinestore.orderservice.entities.Orders;
+import com.galua.onlinestore.orderservice.entities.Status;
 import com.galua.onlinestore.orderservice.repositories.OrdersRepo;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +28,32 @@ public class OrdersServiceImpl implements OrdersService{
             throw new IllegalArgumentException("Заказ уже существует");
         }
         else {
-            log.severe("Сохранение заказа: "+order);
             ordersRepository.save(order);
+            log.severe("Сохранение заказа: "+order);
         }
     }
 
     @Override
-    public void updateOrder(Orders order) {
-        log.severe("Обновление заказа: "+order);
-        ordersRepository.save(order);
+    public void updateStatus(int id, Status status){
+        Orders findOrder = getOrderByID(id);
+        findOrder.setStatus(status);
+        ordersRepository.save(findOrder);
+        log.severe("Обновление статуса: "+findOrder);
+    }
+
+    @Override
+    public void updateOrder(int id, Orders order) {
+        Orders findOrder = getOrderByID(id);
+
+        findOrder.setOfferID(order.getOfferID());
+        findOrder.setName(order.getName());
+        findOrder.setDeliveryTime(order.getDeliveryTime());
+        findOrder.setStatus(order.getStatus());
+        findOrder.setCustomerID(order.getCustomerID());
+        findOrder.setPaid(order.isPaid());
+
+        createOrder(findOrder);
+        log.severe("Обновление заказа: "+findOrder);
     }
 
     @Override
