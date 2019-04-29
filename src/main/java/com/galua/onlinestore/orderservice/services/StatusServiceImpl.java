@@ -28,8 +28,8 @@ public class StatusServiceImpl implements StatusService{
             throw new IllegalArgumentException("Статус уже существует");
         }
         else {
-            log.severe("Сохранение статуса: " +status);
             statusRepositoty.save(status);
+            log.severe("Сохранение статуса: " +status);
         }
     }
 

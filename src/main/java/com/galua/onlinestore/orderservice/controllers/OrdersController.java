@@ -20,8 +20,8 @@ public class OrdersController {
     @Autowired
     private StatusService statusService;
 
-    @GetMapping("order/{id}")
-    public ResponseEntity<Orders> getOrderById(@PathVariable("id") int id) {
+    @GetMapping("orders/{id}")
+    public ResponseEntity<Orders> getOrdersById(@PathVariable("id") int id) {
         Orders order = ordersService.getOrderByID(id);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
@@ -32,8 +32,8 @@ public class OrdersController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("order")
-    public ResponseEntity<Void> addOrder(@RequestBody Orders order, UriComponentsBuilder builder) {
+    @PostMapping("orders")
+    public ResponseEntity<Void> addOrders(@RequestBody Orders order, UriComponentsBuilder builder) {
         try {
             ordersService.createOrder(order);
         }
@@ -41,19 +41,19 @@ public class OrdersController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/order/{id}").buildAndExpand(order.getId()).toUri());
+        headers.setLocation(builder.path("/orders/{id}").buildAndExpand(order.getId()).toUri());
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("order")
-    public ResponseEntity<Orders> updateOrder(@RequestBody Orders order) {
+    @PutMapping("orders")
+    public ResponseEntity<Orders> updateOrders(@RequestBody Orders order) {
         ordersService.updateOrder(order);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-    @PatchMapping("order/{id}")
-    public ResponseEntity<Void> updateStatus(@RequestBody Orders order,
-                                             @PathVariable("id") int id) {
+    @PatchMapping("orders/{id}")
+    public ResponseEntity<Void> updateStatuses(@RequestBody Orders order,
+                                               @PathVariable("id") int id) {
         if(order==null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -62,8 +62,8 @@ public class OrdersController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("order/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable("id") int id) {
+    @DeleteMapping("orders/{id}")
+    public ResponseEntity<Void> deleteOrders(@PathVariable("id") int id) {
         ordersService.deleteOrder(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
