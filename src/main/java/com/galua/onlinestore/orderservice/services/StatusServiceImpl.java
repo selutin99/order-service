@@ -37,7 +37,16 @@ public class StatusServiceImpl implements StatusService{
     public void updateStatus(int id, Status status) {
         Status findStatus = getStatusByID(id);
         findStatus.setName(status.getName());
-        createStatus(findStatus);
+
+        List<Status> list = statusRepositoty.findByName(status.getName());
+        if(status.getName().equals(findStatus.getName())) {
+            list.remove(findStatus);
+        }
+        if(list.size()>0){
+            throw new IllegalArgumentException("Статус уже существует");
+        }
+        statusRepositoty.save(findStatus);
+
         log.severe("Обновление статуса: "+findStatus);
     }
 
