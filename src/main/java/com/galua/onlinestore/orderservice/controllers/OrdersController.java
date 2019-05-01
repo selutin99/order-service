@@ -1,9 +1,7 @@
 package com.galua.onlinestore.orderservice.controllers;
 
 import com.galua.onlinestore.orderservice.entities.Orders;
-import com.galua.onlinestore.orderservice.entities.Status;
 import com.galua.onlinestore.orderservice.services.OrdersService;
-import com.galua.onlinestore.orderservice.services.StatusService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -64,10 +62,9 @@ public class OrdersController {
     public ResponseEntity<Orders> updateOrders(@PathVariable(value = "id") int id,
                                                @RequestBody Orders order) {
         try {
-            ordersService.updateOrder(id, order);
+            Orders findOrder = ordersService.updateOrder(id, order);
             log.severe("Заказ обновлён успешно");
-            order.setId(id);
-            return new ResponseEntity<>(order, HttpStatus.OK);
+            return new ResponseEntity<>(findOrder, HttpStatus.OK);
         }
         catch(NoSuchElementException e){
             log.severe("Передан несуществующий заказ");
@@ -80,23 +77,20 @@ public class OrdersController {
     }
 
     @PatchMapping("orders/{id}")
-    public ResponseEntity updateStatuses(@PathVariable("id") int id,
-                                         @RequestBody Status status) {
-        if(status==null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity updateStatuses(@PathVariable("id") int orderID,
+                                         @RequestBody int statusID) {
         try {
-            ordersService.updateStatus(id, status);
+            Orders findOrder = ordersService.updateStatus(orderID, statusID);
+            return new ResponseEntity(findOrder, HttpStatus.OK);
         }
         catch(NoSuchElementException e){
-            log.severe("Заказ не найден");
+            log.severe("Заказ/статус не найден");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         catch(Exception e){
-            log.severe("Передан неверный заказ");
+            log.severe("Передан неверный заказ/статус");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(status, HttpStatus.OK);
     }
 
     @DeleteMapping("orders/{id}")

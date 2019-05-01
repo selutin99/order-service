@@ -2,7 +2,6 @@ package com.galua.onlinestore.orderservice.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -23,7 +22,9 @@ public class Orders {
     //TODO: Добавить внешний ключ после подключения модуля
     private int offerID;
 
+    @Column(unique = true)
     private String name;
+
     private Timestamp deliveryTime;
 
     @ManyToOne(fetch = FetchType.EAGER)

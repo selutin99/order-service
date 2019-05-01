@@ -1,7 +1,6 @@
 package com.galua.onlinestore.orderservice.services;
 
 import com.galua.onlinestore.orderservice.entities.Orders;
-import com.galua.onlinestore.orderservice.entities.Status;
 import com.galua.onlinestore.orderservice.repositories.OrdersRepo;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,9 @@ public class OrdersServiceImpl implements OrdersService{
     @Autowired
     private OrdersRepo ordersRepository;
 
+    @Autowired
+    private StatusService statusService;
+
     @Override
     public void createOrder(Orders order) {
         if(order==null){
@@ -28,32 +30,42 @@ public class OrdersServiceImpl implements OrdersService{
             throw new IllegalArgumentException("Заказ уже существует");
         }
         else {
+            order.setStatus(statusService.getStatusByID(order.getStatus().getId()));
             ordersRepository.save(order);
             log.severe("Сохранение заказа: "+order);
         }
     }
 
     @Override
-    public void updateStatus(int id, Status status){
-        Orders findOrder = getOrderByID(id);
-        findOrder.setStatus(status);
+    public Orders updateStatus(int orderID, int statusID){
+        Orders findOrder = getOrderByID(orderID);
+        findOrder.setStatus(statusService.getStatusByID(statusID));
         ordersRepository.save(findOrder);
         log.severe("Обновление статуса: "+findOrder);
+        return findOrder;
     }
 
     @Override
-    public void updateOrder(int id, Orders order) {
+    public Orders updateOrder(int id, Orders order) {
         Orders findOrder = getOrderByID(id);
 
         findOrder.setOfferID(order.getOfferID());
         findOrder.setName(order.getName());
         findOrder.setDeliveryTime(order.getDeliveryTime());
-        findOrder.setStatus(order.getStatus());
+        findOrder.setStatus(statusService.getStatusByID(order.getStatus().getId()));
         findOrder.setCustomerID(order.getCustomerID());
         findOrder.setPaid(order.isPaid());
 
-        createOrder(findOrder);
+        List<Orders> list = ordersRepository.findByName(order.getName());
+        if(order.getName().equals(findOrder.getName())) {
+            list.remove(findOrder);
+        }
+        if(list.size()>0){
+            throw new IllegalArgumentException("Заказ уже существует");
+        }
+        ordersRepository.save(findOrder);
         log.severe("Обновление заказа: "+findOrder);
+        return findOrder;
     }
 
     @Override
