@@ -1,5 +1,7 @@
 package com.galua.onlinestore.orderservice.services;
 
+import com.galua.onlinestore.offerservice.entities.Categories;
+import com.galua.onlinestore.offerservice.entities.Offers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,9 +14,15 @@ public class OffersService {
     private RestTemplate myRestTemplate;
 
     @Value("${service.offer.url}")
-    private String restUrl;
+    private String serviceURL;
 
-    public int getPrices(int id) {
-        return myRestTemplate.getForObject(restUrl+id, Integer.class);
+    public float getPrice(int id) {
+        Offers offer = myRestTemplate.getForObject(serviceURL+"offers/"+id, Offers.class);
+        return offer.getPrice();
+    }
+
+    public Categories getCategory(int id){
+        Offers offer = myRestTemplate.getForObject(serviceURL+"offers/"+id, Offers.class);
+        return offer.getCategory();
     }
 }
