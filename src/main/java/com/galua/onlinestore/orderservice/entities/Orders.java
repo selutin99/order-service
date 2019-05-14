@@ -19,7 +19,6 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    //TODO: Добавить внешний ключ после подключения модуля
     private int offerID;
 
     @Column(unique = true)
@@ -32,7 +31,6 @@ public class Orders {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Status status;
 
-    //TODO: Добавить внешний ключ после подключения модуля
     private int customerID;
 
     private boolean paid;

@@ -30,7 +30,9 @@ public class OrdersServiceImpl implements OrdersService{
             throw new IllegalArgumentException("Заказ уже существует");
         }
         else {
-            order.setStatus(statusService.getStatusByID(order.getStatus().getId()));
+            if(order.getStatus()!=null) {
+                order.setStatus(statusService.getStatusByID(order.getStatus().getId()));
+            }
             ordersRepository.save(order);
             log.severe("Сохранение заказа: "+order);
         }

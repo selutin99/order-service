@@ -1,5 +1,7 @@
 package com.galua.onlinestore.orderservice.controllers;
 
+import com.galua.onlinestore.offerservice.entities.Offers;
+import com.galua.onlinestore.orderservice.services.CustomerService;
 import com.galua.onlinestore.orderservice.entities.Orders;
 import com.galua.onlinestore.orderservice.services.OrdersService;
 import lombok.extern.java.Log;
@@ -10,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.sql.Timestamp;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Log
@@ -18,6 +23,9 @@ import java.util.NoSuchElementException;
 public class OrdersController {
     @Autowired
     private OrdersService ordersService;
+
+    @Autowired
+    private CustomerService customerService;
 
     @GetMapping("orders/{id}")
     public ResponseEntity<Orders> getOrdersById(@PathVariable("id") int id) {
@@ -29,6 +37,33 @@ public class OrdersController {
         catch(NoSuchElementException e){
             log.severe("Заказ не найден");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("orders/make")
+    public ResponseEntity<Orders> makeOrders(@RequestBody Map<Object, Object> request) {
+        try {
+            int customerID = this.customerService.getCustomerID(request.get("token").toString());
+            LinkedHashMap offer = (LinkedHashMap) request.get("offer");
+
+            //Создаём новый заказ
+            Orders order = new Orders();
+
+            order.setName(offer.get("name").toString());
+            order.setDeliveryTime(new Timestamp(System.currentTimeMillis()));
+            order.setStatus(null);
+            order.setCustomerID(customerID);
+            order.setOfferID(Integer.valueOf(offer.get("id").toString()));
+            order.setPaid(false);
+
+            ordersService.createOrder(order);
+
+            log.severe("Заказ создан");
+            return new ResponseEntity<>(order, HttpStatus.CREATED);
+        }
+        catch(Exception e){
+            log.severe("При оформлении заказа произошла ошибка");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
