@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.sql.Timestamp;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Log
 @RestController
@@ -49,7 +46,9 @@ public class OrdersController {
             //Создаём новый заказ
             Orders order = new Orders();
 
-            order.setName(offer.get("name").toString());
+            String nameToken = UUID.randomUUID().toString().toUpperCase().replace("-", "");
+
+            order.setName(offer.get("name").toString()+nameToken);
             order.setDeliveryTime(new Timestamp(System.currentTimeMillis()));
             order.setStatus(null);
             order.setCustomerID(customerID);
